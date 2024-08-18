@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
 const TransactionForm = ({ onAddTransaction }) => {
+    //form inputs
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
-
+// how to handle submit
   const handleSubmit = (e) => {
     e.preventDefault();
     const newTransaction = {

@@ -1,36 +1,9 @@
 import React from 'react';
 
-import React, { useState } from 'react';
-
-const TransactionTable = ({ transactions, onDelete }) => {
-  const [sortConfig, setSortConfig] = useState(null);
-
-  const sortedTransactions = React.useMemo(() => {
-    let sortableTransactions = [...transactions];
-    if (sortConfig !== null) {
-      sortableTransactions.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableTransactions;
-  }, [transactions, sortConfig]);
-
-  const requestSort = (key) => {
-    let direction = 'ascending';
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
+const TransactionTable = ({ transactions, onDelete, onSort, sortConfig }) => {
+  const getSortDirection = (key) => {
+    if (!sortConfig || sortConfig.key !== key) return null;
+    return sortConfig.direction === 'ascending' ? '▲' : '▼';
   };
 
   return (
@@ -38,13 +11,13 @@ const TransactionTable = ({ transactions, onDelete }) => {
       <thead>
         <tr>
           <th>
-            <button type="button" onClick={() => requestSort('description')}>
-              Description
+            <button type="button" onClick={() => onSort('description')}>
+              Description {getSortDirection('description')}
             </button>
           </th>
           <th>
-            <button type="button" onClick={() => requestSort('category')}>
-              Category
+            <button type="button" onClick={() => onSort('category')}>
+              Category {getSortDirection('category')}
             </button>
           </th>
           <th>Amount</th>
@@ -52,7 +25,7 @@ const TransactionTable = ({ transactions, onDelete }) => {
         </tr>
       </thead>
       <tbody>
-        {sortedTransactions.map((transaction) => (
+        {transactions.map((transaction) => (
           <tr key={transaction.id}>
             <td>{transaction.description}</td>
             <td>{transaction.category}</td>
